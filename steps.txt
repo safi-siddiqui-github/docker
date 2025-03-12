@@ -1,0 +1,76 @@
+Mern APP
+
+Server: Nginx
+
+    Project Init:
+
+        mkdir nginx-app && cd nginx-app
+        docker build -t nginx-dev-image -f Dockerfile .
+
+        docker run --name=nginx-dev-app -d -p 80:80 nginx-dev-image
+        docker run --name=nginx-dev-app -d -p 80:80 -v $(pwd)/conf.d:/etc/nginx/conf.d nginx-dev-image
+        docker run --name=nginx-dev-app --rm -p 80:80 -v $(pwd)/conf.d:/etc/nginx/conf.d nginx-dev-image
+
+        docker stop nginx-dev-app && docker remove nginx-dev-app
+        docker image remove nginx-dev-image
+
+
+Frontend: Next JS
+
+    Project init:
+        mkdir next-app && cd next-app
+        docker run -it --rm -v $(pwd):/app -w /app node:23-alpine sh
+        npx create-next-app@latest ./
+        sudo chown -R $(whoami):$(whoami) $(pwd)
+
+    Dockerfile: [Optional]
+
+        docker build -t nextjs-dev-image -f $(pwd)/docker/Dockerfile.dev .
+        docker run --name=nextjs-dev-app -d -p 3000:3000 -v $(pwd):/app -w /app nextjs-dev-image
+        docker stop nextjs-dev-app && docker remove nextjs-dev-app
+        docker image remove nextjs-dev-image
+
+        docker build -t nextjs-prod-image -f $(pwd)/docker/Dockerfile.prod .
+        docker run --name=nextjs-prod-app -d -p 3000:3000 nextjs-prod-image
+        docker stop nextjs-prod-app && docker remove nextjs-prod-app
+        docker image remove nextjs-prod-image
+
+        
+Backend: Express JS
+
+    Project init:
+        mkdir express-app && cd express-app
+        docker run -it --rm -v $(pwd):/app -w /app node:23-alpine sh
+        npm install express --save
+        npm install --save-dev nodemon
+        sudo chown -R $(whoami):$(whoami) $(pwd)
+    
+    Dockerfile: [Optional]
+        docker build -t expressjs-dev-image -f $(pwd)/docker/Dockerfile.dev .
+        docker run --name=expressjs-dev-app -d -p 3000:3000 -v $(pwd):/app -w /app expressjs-dev-image
+        docker stop expressjs-dev-app && docker remove expressjs-dev-app
+        docker image remove expressjs-dev-image
+
+        docker build -t expressjs-prod-image -f $(pwd)/docker/Dockerfile.prod .
+        docker run --name=expressjs-prod-app -d -p 3000:3000 expressjs-prod-image
+        docker stop expressjs-prod-app && docker remove expressjs-prod-app
+        docker image remove expressjs-prod-image
+
+    
+Database: MongoDB
+
+
+Compose:
+
+    docker compose -f compose.dev.yaml up --watch
+        -- auto build dev image, network, and expose
+
+    docker compose -f compose.dev.yaml down
+        -- scale compose.dev down
+
+    docker compose -f compose.prod.yaml up -d
+        -- auto build prod image, network, and expose
+
+    docker compose -f compose.prod.yaml down
+        -- scale compose.prod down
+

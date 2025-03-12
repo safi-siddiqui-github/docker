@@ -1,0 +1,32 @@
+name: mern-prod
+
+services:
+
+  server:
+    build:
+      context: /home/safi/main/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - network
+
+  frontend:
+    build:
+      context: /home/safi/main/javascript/next-app
+      dockerfile: docker/Dockerfile.prod
+    networks:
+      - network
+
+  backend:
+    build:
+      context: /home/safi/main/javascript/express-app
+      dockerfile: docker/Dockerfile.prod
+    networks:
+      - network
+
+networks:
+  network:
