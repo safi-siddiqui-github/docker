@@ -51,8 +51,11 @@ Framework: Tailwind CSS Vite
         docker stop tailwindcss-dev-app && docker remove tailwindcss-dev-app
         docker image remove tailwindcss-dev-image
 
-
-
+        docker build -t nextjs-prod-image -f $(pwd)/docker/Dockerfile.prod .
+        docker run --name=nextjs-prod-app -d -p 80:80 nextjs-prod-image
+        docker stop nextjs-prod-app && docker remove nextjs-prod-app
+        docker image remove nextjs-prod-image
+        
 Framework: Next JS
 
     Project init:
