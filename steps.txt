@@ -10,6 +10,7 @@ Compose:
         -- scale compose.dev down
 
     docker compose -f compose.prod.yaml up -d
+    docker compose -f compose.prod.yaml up --build -d
         -- auto build prod image, network, and expose
 
     docker compose -f compose.prod.yaml down
