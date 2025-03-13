@@ -1,5 +1,21 @@
 Mern APP
 
+Compose:
+
+    docker compose -f compose.dev.yaml up --watch
+    docker compose -f compose.dev.yaml up --build --watch
+        -- auto build dev image, network, and expose
+
+    docker compose -f compose.dev.yaml down
+        -- scale compose.dev down
+
+    docker compose -f compose.prod.yaml up -d
+        -- auto build prod image, network, and expose
+
+    docker compose -f compose.prod.yaml down
+        -- scale compose.prod down
+
+
 Server: Nginx
 
     Project Init:
@@ -15,7 +31,28 @@ Server: Nginx
         docker image remove nginx-dev-image
 
 
-Frontend: Next JS
+Framework: Tailwind CSS Vite
+
+    Project Init:
+        mkdir tailwind-app && cd tailwind-app
+        docker run -it --rm -v $(pwd):/app -w /app node:23-alpine sh
+        docker run -it --rm -p 5173:5173 -v $(pwd):/app -w /app node:23-alpine sh
+
+        npm create vite@latest ./
+        npm install tailwindcss @tailwindcss/vite
+
+        sudo chown -R $(whoami):$(whoami) $(pwd)
+
+    Dockerfile:
+    
+        docker build -t tailwindcss-dev-image -f $(pwd)/docker/Dockerfile.dev .
+        docker run --name=tailwindcss-dev-app -d -p 5173:5173 -v $(pwd):/app -w /app tailwindcss-dev-image
+        docker stop tailwindcss-dev-app && docker remove tailwindcss-dev-app
+        docker image remove tailwindcss-dev-image
+
+
+
+Framework: Next JS
 
     Project init:
         mkdir next-app && cd next-app
@@ -36,7 +73,7 @@ Frontend: Next JS
         docker image remove nextjs-prod-image
 
         
-Backend: Express JS
+Framework: Express JS
 
     Project init:
         mkdir express-app && cd express-app
@@ -60,17 +97,5 @@ Backend: Express JS
 Database: MongoDB
 
 
-Compose:
 
-    docker compose -f compose.dev.yaml up --watch
-        -- auto build dev image, network, and expose
-
-    docker compose -f compose.dev.yaml down
-        -- scale compose.dev down
-
-    docker compose -f compose.prod.yaml up -d
-        -- auto build prod image, network, and expose
-
-    docker compose -f compose.prod.yaml down
-        -- scale compose.prod down
 
