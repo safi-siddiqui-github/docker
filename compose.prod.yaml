@@ -17,14 +17,14 @@ services:
 
   tailwindcss:
     build:
-      context: /home/safi/main/html/tailwindcss-app
+      context: /home/safi/main/tailwindcss-app
       dockerfile: docker/Dockerfile.prod
     networks:
       - network
 
   nextjs:
     build:
-      context: /home/safi/main/javascript/next-app
+      context: /home/safi/main/next-app
       dockerfile: docker/Dockerfile.prod
     networks:
       - network
@@ -33,7 +33,7 @@ services:
 
   expressjs:
     build:
-      context: /home/safi/main/javascript/express-app
+      context: /home/safi/main/express-app
       dockerfile: docker/Dockerfile.prod
     networks:
       - network

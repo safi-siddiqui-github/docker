@@ -34,12 +34,12 @@ services:
 
   tailwindcss:
     build:
-      context: /home/safi/main/html/tailwindcss-app
+      context: /home/safi/main/tailwindcss-app
       dockerfile: docker/Dockerfile.dev
     develop:
       watch:
         - action: sync
-          path: /home/safi/main/html/tailwindcss-app
+          path: /home/safi/main/tailwindcss-app
           target: /app
           ignore:
             - node_modules/
@@ -51,7 +51,7 @@ services:
 
     # Build Image
     build:
-      context: /home/safi/main/javascript/next-app
+      context: /home/safi/main/next-app
       dockerfile: docker/Dockerfile.dev
 
     # Local Image
@@ -63,8 +63,8 @@ services:
     #   - "3000:3000"
 
     # extra_hosts:
-      # - "nextjs.localhost:127.0.0.1"
-      # - "nextjs.localhost:host-gateway"
+    #   - "nextjs.localhost:127.0.0.1"
+    #   - "nextjs.localhost:host-gateway"
 
     # Watch is better then bind
     # volumes:
@@ -75,7 +75,7 @@ services:
     develop:
       watch:
         - action: sync
-          path: /home/safi/main/javascript/next-app
+          path: /home/safi/main/next-app
           target: /app
           ignore:
             - node_modules/
@@ -89,7 +89,7 @@ services:
 
   expressjs:
     build:
-      context: /home/safi/main/javascript/express-app
+      context: /home/safi/main/express-app
       dockerfile: docker/Dockerfile.dev
 
     # nginx works with containers port
@@ -100,14 +100,25 @@ services:
     develop:
       watch:
         - action: sync
-          path: /home/safi/main/javascript/express-app
+          path: /home/safi/main/express-app
           target: /app
           ignore:
             - node_modules/
 
     networks:
       - network
+
+  mongodb:
+    image: mongodb/mongodb-community-server:5.0.22-ubuntu2004
+    restart: always
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - network
     
   
 networks:
   network:
+
+volumes:
+  mongodb-data:

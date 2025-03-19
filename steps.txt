@@ -1,10 +1,11 @@
-Mern APP
+APP
 
 Compose:
 
     docker compose -f compose.dev.yaml up --watch
     docker compose -f compose.dev.yaml up --build --watch
         -- auto build dev image, network, and expose
+        -- build after an npm package
 
     docker compose -f compose.dev.yaml down
         -- scale compose.dev down
@@ -15,6 +16,9 @@ Compose:
 
     docker compose -f compose.prod.yaml down
         -- scale compose.prod down
+
+Node ENV:
+    docker run -it --rm -v $(pwd):/app -w /app node:23-alpine sh
 
 
 Server: Nginx
@@ -30,7 +34,6 @@ Server: Nginx
 
         docker stop nginx-dev-app && docker remove nginx-dev-app
         docker image remove nginx-dev-image
-
 
 Framework: Tailwind CSS Vite
 
@@ -75,7 +78,6 @@ Framework: Next JS
         docker run --name=nextjs-prod-app -d -p 3000:3000 nextjs-prod-image
         docker stop nextjs-prod-app && docker remove nextjs-prod-app
         docker image remove nextjs-prod-image
-
         
 Framework: Express JS
 
@@ -84,6 +86,8 @@ Framework: Express JS
         docker run -it --rm -v $(pwd):/app -w /app node:23-alpine sh
         npm install express --save
         npm install --save-dev nodemon
+        npm install mongoose
+        npm install cors
         sudo chown -R $(whoami):$(whoami) $(pwd)
     
     Dockerfile: [Optional]
@@ -96,10 +100,42 @@ Framework: Express JS
         docker run --name=expressjs-prod-app -d -p 3000:3000 expressjs-prod-image
         docker stop expressjs-prod-app && docker remove expressjs-prod-app
         docker image remove expressjs-prod-image
-
     
 Database: MongoDB
 
+    Dockerfile:
+
+        User Login:
+        docker run -d \
+            --name mongodb-dev-app \
+            --network mongodb \
+            -p 27017:27017 \
+            -v mongodb-data:/data/db \
+            mongodb/mongodb-community-server:5.0.22-ubuntu2004
+
+        docker exec -it mongodb-dev-app mongosh
+        docker exec -it mongodb-dev-app mongosh mongodb://dbUser:dbPass@localhost:27017/db_one
+        docker exec -it mongodb-dev-app mongosh -u dbUser -p dbPass --authenticationDatabase db_one
+            
+        Admin Login:
+        docker run -d \
+            --name mongodb-dev-app \
+            --network mongodb \
+            -e MONGODB_INITDB_ROOT_USERNAME=user \
+            -e MONGODB_INITDB_ROOT_PASSWORD=pass \
+            -p 27017:27017 \
+            -v mongodb-data:/data/db \
+            mongodb/mongodb-community-server:5.0.22-ubuntu2004
+    
+        docker exec -it mongodb-dev-app mongosh -u user -p pass --authenticationDatabase admin
+        docker exec -it mongodb-dev-app mongosh mongodb://user:pass@localhost:27017
+
+        docker stop mongodb-dev-app && docker remove mongodb-dev-app
 
 
+        docker build -t mongodb-dev-image -f $(pwd)/docker/Dockerfile.dev .
+        docker run --name=mongodb-dev-app -d -p 27017:27017 mongodb-dev-image
+        docker run --name=mongodb-dev-app --rm -p 27017:27017 mongodb-dev-image
+
+        docker rmi mongodb-dev-image
 
